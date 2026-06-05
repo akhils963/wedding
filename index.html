@@ -10,6 +10,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -42,13 +47,24 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
+      background: rgba(245, 239, 230, 0.88);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--beige-deeper);
+    }
+    .nav-toggle {
+      display: none;
+      font-size: 1.5rem;
+      padding: 0.8rem 1.5rem;
+      cursor: pointer;
+      color: var(--brown-dark);
+      text-align: right;
+      width: 100%;
+    }
+    .nav-links {
       display: flex;
       justify-content: center;
       gap: 2.5rem;
       padding: 1rem;
-      background: rgba(245, 239, 230, 0.88);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--beige-deeper);
     }
     nav a {
       font-family: 'Jost', sans-serif;
@@ -59,8 +75,34 @@
       color: var(--brown-dark);
       text-decoration: none;
       transition: color .2s;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 1px;
+      bottom: -4px;
+      left: 50%;
+      background-color: var(--gold);
+      transition: width 0.3s ease, left 0.3s ease;
     }
     nav a:hover { color: var(--gold); }
+    nav a:hover::after { width: 100%; left: 0; }
+
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 0 1.5rem 1.5rem 1.5rem;
+        text-align: center;
+        background: rgba(245, 239, 230, 0.95);
+      }
+      .nav-links.active { display: flex; }
+      .nav-links a { font-size: 0.9rem; }
+    }
 
     /* ─── HERO ─── */
     #hero {
@@ -86,12 +128,21 @@
       position: absolute;
       width: 320px;
       height: 320px;
-      border-radius: 50%;
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
       border: 1px solid rgba(201,169,110,0.25);
       pointer-events: none;
+      animation: morphFloat 15s ease-in-out infinite alternate;
+    }
+    #hero::after {
+      animation-direction: alternate-reverse;
+      animation-duration: 18s;
+      bottom: -80px; right: -80px;
     }
     #hero::before { top: -80px; left: -80px; }
-    #hero::after  { bottom: -80px; right: -80px; }
+    @keyframes morphFloat {
+      0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg) translate(0, 0); }
+      100% { border-radius: 60% 40% 30% 70% / 60% 50% 40% 50%; transform: rotate(45deg) translate(20px, -20px); }
+    }
 
     .hero-monogram {
       font-family: 'Cormorant Garamond', serif;
@@ -287,6 +338,11 @@
       text-align: center;
       position: relative;
       overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .event-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(139, 111, 94, 0.1);
     }
     .event-map-link {
       display: inline-flex;
@@ -395,6 +451,11 @@
     .gallery-slot-inner svg { width: 28px; height: 28px; stroke: var(--brown); fill: none; opacity: 0.5; }
     .gallery-slot:hover .gallery-slot-inner { background: var(--beige-deeper); }
     /* story card photo placeholders */
+    .story-card { transition: transform 0.3s ease; }
+    .story-card:hover .story-avatar-photo {
+      transform: scale(1.05) rotate(3deg);
+      box-shadow: 0 10px 20px rgba(201,169,110,0.3);
+    }
     .story-avatar-photo {
       width: 110px;
       height: 110px;
@@ -406,6 +467,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
     .story-avatar-photo img {
       width: 100%; height: 100%;
@@ -521,12 +583,21 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: background .2s, color .2s, opacity .2s;
+      transition: background .2s, color .2s, opacity .2s, transform 0.2s;
       margin-top: 0.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      animation: pulse-soft 2s infinite;
+    }
+    .btn-rsvp:hover {
+      transform: translateY(-2px);
+    }
+    @keyframes pulse-soft {
+      0% { box-shadow: 0 0 0 0 rgba(92, 64, 51, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(92, 64, 51, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(92, 64, 51, 0); }
     }
     .btn-rsvp:hover:not(:disabled) { background: var(--gold); color: var(--brown-dark); }
     .btn-rsvp:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -587,6 +658,22 @@
       font-size: 0.8rem;
       opacity: 0.5;
       letter-spacing: 0.05em;
+    }
+
+    /* ─── FLOATING PARTICLES ─── */
+    .particle {
+      position: absolute;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(100px) scale(0); opacity: 0; }
+      20% { opacity: 0.5; transform: translateY(0) scale(1); }
+      80% { opacity: 0.5; }
+      100% { transform: translateY(-300px) scale(0.5); opacity: 0; }
     }
 
     /* ─── FADE-IN ANIMATION ─── */
@@ -654,13 +741,16 @@
 <body>
 
   <!-- NAV -->
-  <nav>
-    <a href="#hero">Home</a>
-    <a href="#countdown">Countdown</a>
-    <a href="#story">Couple</a>
-    <a href="#events">Events</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#rsvp">RSVP</a>
+  <nav id="main-nav">
+    <div class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">☰</div>
+    <div class="nav-links" id="nav-links">
+      <a href="#hero">Home</a>
+      <a href="#countdown">Countdown</a>
+      <a href="#story">Couple</a>
+      <a href="#events">Events</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#rsvp">RSVP</a>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -698,27 +788,7 @@
       <h2 class="section-title">Counting Down the Days</h2>
       <p class="section-sub">Until we say "I do"</p>
 
-      <div class="countdown-grid">
-        <div class="count-item">
-          <div class="count-num" id="cd-days">—</div>
-          <div class="count-label">Days</div>
-        </div>
-        <div class="count-sep" aria-hidden="true">:</div>
-        <div class="count-item">
-          <div class="count-num" id="cd-hours">—</div>
-          <div class="count-label">Hours</div>
-        </div>
-        <div class="count-sep" aria-hidden="true">:</div>
-        <div class="count-item">
-          <div class="count-num" id="cd-mins">—</div>
-          <div class="count-label">Minutes</div>
-        </div>
-        <div class="count-sep" aria-hidden="true">:</div>
-        <div class="count-item">
-          <div class="count-num" id="cd-secs">—</div>
-          <div class="count-label">Seconds</div>
-        </div>
-      </div>
+      <div id="react-countdown-root"></div>
     </div>
   </section>
 
@@ -877,6 +947,10 @@
           <label for="email">Email Address</label>
           <input type="email" id="email" name="email" placeholder="you@example.com" required />
         </div>
+        <div class="form-group" style="margin-top:-10px; margin-bottom:15px;">
+          <label for="phone">Phone Number (Optional)</label>
+          <input type="tel" id="phone" name="phone" placeholder="Your phone number" />
+        </div>
         <div class="form-row">
           <div class="form-group">
             <label for="attending">Attending?</label>
@@ -954,25 +1028,6 @@
     // After completing google-sheets-setup.md, paste your Apps Script URL below:
     const RSVP_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzB1NpIy9NIujowefqjTGBxElQx7_ckiojOEELPw9f5l3Gq5Y0r2N2ZJRkLrqKV7A-YWA/exec';
 
-    // ── Countdown Timer ──────────────────────────────────────
-    const weddingDate = new Date('2026-09-10T10:00:00');
-    function updateCountdown() {
-      const now  = new Date();
-      const diff = weddingDate - now;
-      if (diff <= 0) {
-        document.getElementById('cd-days').textContent  = '0';
-        document.getElementById('cd-hours').textContent = '0';
-        document.getElementById('cd-mins').textContent  = '0';
-        document.getElementById('cd-secs').textContent  = '0';
-        return;
-      }
-      document.getElementById('cd-days').textContent  = Math.floor(diff / 86400000);
-      document.getElementById('cd-hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
-      document.getElementById('cd-mins').textContent  = String(Math.floor((diff % 3600000)  / 60000)).padStart(2,'0');
-      document.getElementById('cd-secs').textContent  = String(Math.floor((diff % 60000)    / 1000)).padStart(2,'0');
-    }
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
 
     // ── Fade-in on scroll ────────────────────────────────────
     const observer = new IntersectionObserver(entries => {
@@ -1021,6 +1076,7 @@
         fname:     form.fname.value.trim(),
         lname:     form.lname.value.trim(),
         email:     form.email.value.trim(),
+        phone:     form.phone.value.trim(),
         attending: form.attending.value,
         guests:    form.guests.value,
         events:    checkedEvents,
@@ -1056,6 +1112,7 @@
         btn.style.color = '#fff';
         msgEl.className = 'rsvp-message success';
         msgEl.textContent = '🎉 Thank you! Your RSVP has been received. We can\'t wait to celebrate with you!';
+        if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         form.reset();
       } catch (err) {
         btn.classList.remove('loading');
@@ -1081,7 +1138,85 @@
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closeLightbox();
     });
+
+    // ── Mobile Nav Toggle ──────────────────────────────────────
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    const navItems = navLinks.querySelectorAll('a');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+      });
+    });
+
+    // ── Floating Particles in Hero ───────────────────────────
+    const hero = document.getElementById('hero');
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.width = Math.random() * 5 + 2 + 'px';
+      p.style.height = p.style.width;
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = Math.random() * 8 + 's';
+      p.style.animationDuration = Math.random() * 5 + 5 + 's';
+      hero.appendChild(p);
+    }
   </script>
 
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const Countdown = () => {
+      const calculateTimeLeft = () => {
+        const difference = new Date('2026-09-10T10:00:00') - new Date();
+        if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        return {
+          days: Math.floor(difference / 86400000),
+          hours: Math.floor((difference % 86400000) / 3600000),
+          minutes: Math.floor((difference % 3600000) / 60000),
+          seconds: Math.floor((difference % 60000) / 1000)
+        };
+      };
+
+      const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+      useEffect(() => {
+        const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+        return () => clearInterval(timer);
+      }, []);
+
+      const format = (num) => String(num).padStart(2, '0');
+
+      return (
+        <div className="countdown-grid">
+          <div className="count-item">
+            <div className="count-num">{timeLeft.days}</div>
+            <div className="count-label">Days</div>
+          </div>
+          <div className="count-sep" aria-hidden="true">:</div>
+          <div className="count-item">
+            <div className="count-num">{format(timeLeft.hours)}</div>
+            <div className="count-label">Hours</div>
+          </div>
+          <div className="count-sep" aria-hidden="true">:</div>
+          <div className="count-item">
+            <div className="count-num">{format(timeLeft.minutes)}</div>
+            <div className="count-label">Minutes</div>
+          </div>
+          <div className="count-sep" aria-hidden="true">:</div>
+          <div className="count-item">
+            <div className="count-num">{format(timeLeft.seconds)}</div>
+            <div className="count-label">Seconds</div>
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('react-countdown-root'));
+    root.render(<Countdown />);
+  </script>
 </body>
 </html>
