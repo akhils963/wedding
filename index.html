@@ -11,10 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- React & ReactDOM -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -293,7 +289,7 @@
       padding-top: 0.4rem;
     }
 
-    /* ─── OUR STORY ─── */
+    /* ─── OUR STORY / COUPLE ─── */
     #story { background: var(--beige); }
     .story-grid {
       display: grid;
@@ -320,6 +316,70 @@
       font-size: 0.9rem;
       color: var(--text-light);
       line-height: 1.8;
+    }
+
+    /* ─── ABOUT US SECTION ─── */
+    #about-us { background: var(--white); }
+    .about-us-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .about-us-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 4rem;
+      margin-top: 3.5rem;
+      align-items: center;
+    }
+    @media (max-width: 700px) {
+      .about-us-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+      .about-us-image { order: -1; }
+    }
+    .about-us-image {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(92, 64, 51, 0.15);
+      position: relative;
+    }
+    .about-us-image::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold-light), transparent, var(--gold-light));
+      z-index: -1;
+    }
+    .about-us-image img {
+      width: 100%;
+      display: block;
+      border-radius: 6px;
+    }
+    .about-us-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .about-us-quote-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      color: var(--gold);
+      opacity: 0.3;
+      line-height: 0.5;
+      margin-bottom: 0.5rem;
+    }
+    .about-us-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--text);
+      line-height: 2;
+    }
+    .about-us-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 0.5rem;
     }
 
     /* ─── EVENTS ─── */
@@ -390,7 +450,7 @@
     }
 
     /* ─── GALLERY ─── */
-    #gallery { background: var(--white); }
+    #gallery { background: var(--beige); }
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -399,7 +459,6 @@
     }
     @media (max-width: 500px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
 
-    /* ─── GALLERY ─── */
     .gallery-item {
       aspect-ratio: 1;
       border-radius: 3px;
@@ -426,30 +485,7 @@
     }
     .gallery-item:hover .gallery-item-overlay { opacity: 1; }
     .gallery-item-overlay svg { width: 36px; height: 36px; stroke: #fff; fill: none; }
-    /* styled placeholders for gallery slots */
-    .gallery-slot {
-      aspect-ratio: 1;
-      border-radius: 3px;
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
-    }
-    .gallery-slot-inner {
-      width: 100%; height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--brown);
-      transition: background 0.3s;
-      border: 1px dashed var(--beige-deeper);
-    }
-    .gallery-slot-inner svg { width: 28px; height: 28px; stroke: var(--brown); fill: none; opacity: 0.5; }
-    .gallery-slot:hover .gallery-slot-inner { background: var(--beige-deeper); }
+
     /* story card photo placeholders */
     .story-card { transition: transform 0.3s ease; }
     .story-card:hover .story-avatar-photo {
@@ -516,7 +552,7 @@
     #lightbox-close:hover { background: rgba(255,255,255,0.18); }
 
     /* ─── RSVP ─── */
-    #rsvp { background: var(--beige); }
+    #rsvp { background: var(--beige-dark); }
     .rsvp-form {
       background: var(--white);
       border: 1px solid var(--beige-deeper);
@@ -543,6 +579,10 @@
       text-transform: uppercase;
       color: var(--brown);
       font-weight: 400;
+    }
+    .form-group label .req {
+      color: var(--gold);
+      margin-left: 0.15em;
     }
     .form-group input,
     .form-group select,
@@ -747,6 +787,7 @@
       <a href="#hero">Home</a>
       <a href="#countdown">Countdown</a>
       <a href="#story">Couple</a>
+      <a href="#about-us">Our Story</a>
       <a href="#events">Events</a>
       <a href="#gallery">Gallery</a>
       <a href="#rsvp">RSVP</a>
@@ -755,7 +796,7 @@
 
   <!-- HERO -->
   <section id="hero">
-    <div class="hero-monogram" aria-hidden="true">A&A</div>
+    <div class="hero-monogram" aria-hidden="true">A&amp;A</div>
 
     <p class="hero-label fade-in">Together Forever</p>
 
@@ -788,7 +829,27 @@
       <h2 class="section-title">Counting Down the Days</h2>
       <p class="section-sub">Until we say "I do"</p>
 
-      <div id="react-countdown-root"></div>
+      <div class="countdown-grid" id="countdown-grid">
+        <div class="count-item">
+          <div class="count-num" id="cd-days">--</div>
+          <div class="count-label">Days</div>
+        </div>
+        <div class="count-sep" aria-hidden="true">:</div>
+        <div class="count-item">
+          <div class="count-num" id="cd-hours">--</div>
+          <div class="count-label">Hours</div>
+        </div>
+        <div class="count-sep" aria-hidden="true">:</div>
+        <div class="count-item">
+          <div class="count-num" id="cd-minutes">--</div>
+          <div class="count-label">Minutes</div>
+        </div>
+        <div class="count-sep" aria-hidden="true">:</div>
+        <div class="count-item">
+          <div class="count-num" id="cd-seconds">--</div>
+          <div class="count-label">Seconds</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -796,7 +857,8 @@
   <section id="story">
     <div class="section-inner fade-in">
       <span class="section-tag">The Couple</span>
-      <h2 class="section-title">Two Hearts, One Journey</h2>
+      <h2 class="section-title">Two Hearts, One Soul</h2>
+      <p class="section-sub">Together</p>
 
       <div class="story-grid">
         <div class="story-card">
@@ -805,9 +867,7 @@
           </div>
           <h3 class="story-name">Akhil</h3>
           <p class="story-desc">
-            Kind-hearted and full of warmth, Akhil brings joy and laughter
-            to every room he enters. His love is steady, thoughtful,
-            and endlessly devoted.
+            A people-person through and through, Akhil is always everyone's favourite. Energetic, driven and always ready for the next adventure, he fills every room with positivity, laughter, and good stories. Beneath the charm lies a kind heart and a love that is steady, thoughtful and fiercely devoted.
           </p>
         </div>
         <div class="story-card">
@@ -816,10 +876,32 @@
           </div>
           <h3 class="story-name">Abhini</h3>
           <p class="story-desc">
-            Graceful and radiant, Abhini lights up every moment with her
-            smile and spirit. Her love is gentle, deep,
-            and beautifully sincere.
+            Compassionate and delightfully witty, Abhini treasures relationships as much as her dreams. Equal parts adventurer and logophile, she's the kind of person who would move mountains for those she loves. With a radiant smile and graceful spirit, she brings warmth, laughter, and a little magic wherever she goes.
           </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT US — OUR STORY -->
+  <section id="about-us">
+    <div class="section-inner about-us-inner fade-in">
+      <span class="section-tag">Our Story</span>
+      <h2 class="section-title">How It All Began</h2>
+
+      <div class="about-us-layout">
+        <div class="about-us-image">
+          <img src="photos/About US.png" alt="Akhil and Abhini together" />
+        </div>
+        <div class="about-us-text">
+          <div class="about-us-quote-mark">"</div>
+          <p class="about-us-body">
+            We spent three years in the same college — close enough to share friends, yet far from sharing a story. Life took us on separate journeys, shaping us through lessons, growth and unexpected turns. Then, when the timing was finally right, the universe rewrote the script.
+          </p>
+          <p class="about-us-body">
+            Today, we're each other's calm in the chaos, loudest cheerleaders and favourite adventure — creating a life filled with happiness, adventure, and endless gratitude.
+          </p>
+          <p class="about-us-tagline">— Akhil &amp; Abhini</p>
         </div>
       </div>
     </div>
@@ -909,14 +991,14 @@
             <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
           </div>
         </div>
-        <div class="gallery-item" onclick="openLightbox('photos/Akhil Only.jpg')">
-          <img src="photos/Akhil Only.jpg" alt="Akhil" />
+        <div class="gallery-item" onclick="openLightbox('photos/5.jpg')">
+          <img src="photos/5.jpg" alt="Akhil and Abhini" />
           <div class="gallery-item-overlay">
             <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
           </div>
         </div>
-        <div class="gallery-item" onclick="openLightbox('photos/Abhi Only.jpg')">
-          <img src="photos/Abhi Only.jpg" alt="Abhini" />
+        <div class="gallery-item" onclick="openLightbox('photos/6.png')">
+          <img src="photos/6.png" alt="Akhil and Abhini engaged" />
           <div class="gallery-item-overlay">
             <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
           </div>
@@ -930,30 +1012,26 @@
     <div class="section-inner fade-in">
       <span class="section-tag">Kindly Respond</span>
       <h2 class="section-title">RSVP</h2>
-      <p class="section-sub">Please let us know you're coming by 1st August 2026</p>
+      <p class="section-sub">Please let us know you're coming by 30th August 2026</p>
 
       <form class="rsvp-form" onsubmit="handleRsvp(event)">
         <div class="form-row">
           <div class="form-group">
-            <label for="fname">First Name</label>
+            <label for="fname">First Name <span class="req">*</span></label>
             <input type="text" id="fname" name="fname" placeholder="Your name" required />
           </div>
           <div class="form-group">
-            <label for="lname">Last Name</label>
+            <label for="lname">Last Name <span class="req">*</span></label>
             <input type="text" id="lname" name="lname" placeholder="Last name" required />
           </div>
         </div>
         <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="you@example.com" required />
-        </div>
-        <div class="form-group" style="margin-top:-10px; margin-bottom:15px;">
-          <label for="phone">Phone Number (Optional)</label>
-          <input type="tel" id="phone" name="phone" placeholder="Your phone number" />
+          <label for="phone">Phone Number <span class="req">*</span></label>
+          <input type="tel" id="phone" name="phone" placeholder="Your phone number" required pattern="[0-9+\-\s()]{7,15}" title="Please enter a valid phone number" />
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label for="attending">Attending?</label>
+            <label for="attending">Attending? <span class="req">*</span></label>
             <select id="attending" name="attending" required>
               <option value="" disabled selected>Select</option>
               <option value="yes">Joyfully Accepts</option>
@@ -961,7 +1039,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="guests">No. of Guests</label>
+            <label for="guests">No. of Guests <span class="req">*</span></label>
             <select id="guests" name="guests">
               <option value="1">1</option>
               <option value="2">2</option>
@@ -985,7 +1063,7 @@
               <span class="check-label">💍 Wedding Ceremony &mdash; 10 Sep</span>
             </label>
             <label class="check-option">
-              <input type="checkbox" name="events" value="Reception Mysore (10 Sep)" />
+              <input type="checkbox" name="events" value="Reception Mysore (12 Sep)" />
               <span class="check-box"></span>
               <span class="check-label">🥂 Reception Mysore &mdash; 12 Sep</span>
             </label>
@@ -1020,14 +1098,40 @@
       <span class="divider-line" style="background:rgba(201,169,110,0.4);"></span>
     </div>
     <p class="footer-note">Made with love ♥ · Akhil &amp; Abhini 2026</p>
-    <p style="margin-top:1rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--gold);opacity:0.85;letter-spacing:0.04em;">With love, Thejas &amp; Anusha 🤍</p>
+    <p style="margin-top:1rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--gold);opacity:0.85;letter-spacing:0.04em;">Made with love, Thejas &amp; Anusha 🤍</p>
   </footer>
 
   <script>
     // ── Google Sheets RSVP endpoint ──────────────────────────
-    // After completing google-sheets-setup.md, paste your Apps Script URL below:
     const RSVP_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzB1NpIy9NIujowefqjTGBxElQx7_ckiojOEELPw9f5l3Gq5Y0r2N2ZJRkLrqKV7A-YWA/exec';
 
+    // ── Countdown Timer (pure JS, no React) ─────────────────
+    function updateCountdown() {
+      const weddingDate = new Date('2026-09-10T10:00:00');
+      const now = new Date();
+      const diff = weddingDate - now;
+
+      if (diff <= 0) {
+        document.getElementById('cd-days').textContent    = '00';
+        document.getElementById('cd-hours').textContent   = '00';
+        document.getElementById('cd-minutes').textContent = '00';
+        document.getElementById('cd-seconds').textContent = '00';
+        return;
+      }
+
+      const days    = Math.floor(diff / 86400000);
+      const hours   = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+
+      document.getElementById('cd-days').textContent    = days;
+      document.getElementById('cd-hours').textContent   = String(hours).padStart(2, '0');
+      document.getElementById('cd-minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('cd-seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 
     // ── Fade-in on scroll ────────────────────────────────────
     const observer = new IntersectionObserver(entries => {
@@ -1039,6 +1143,12 @@
       });
     }, { threshold: 0.12 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ── Phone validation helper ──────────────────────────────
+    function isValidPhone(value) {
+      const cleaned = value.replace(/[\s\-()]/g, '');
+      return /^[+]?[0-9]{7,15}$/.test(cleaned);
+    }
 
     // ── RSVP form handler ────────────────────────────────────
     async function handleRsvp(e) {
@@ -1058,9 +1168,17 @@
       inputs.forEach(el => {
         if (!el.value.trim()) { el.classList.add('invalid'); valid = false; }
       });
+
+      // Extra phone validation
+      const phoneEl = document.getElementById('phone');
+      if (phoneEl.value.trim() && !isValidPhone(phoneEl.value.trim())) {
+        phoneEl.classList.add('invalid');
+        valid = false;
+      }
+
       if (!valid) {
         msgEl.className = 'rsvp-message error';
-        msgEl.textContent = 'Please fill in all required fields.';
+        msgEl.textContent = 'Please fill in all required fields correctly. Phone number must be valid.';
         return;
       }
 
@@ -1075,27 +1193,12 @@
       const payload = {
         fname:     form.fname.value.trim(),
         lname:     form.lname.value.trim(),
-        email:     form.email.value.trim(),
         phone:     form.phone.value.trim(),
         attending: form.attending.value,
         guests:    form.guests.value,
         events:    checkedEvents,
         message:   form.message.value.trim()
       };
-
-      // If URL not configured yet, simulate success
-      if (RSVP_SHEET_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
-        setTimeout(() => {
-          btn.classList.remove('loading');
-          btn.querySelector('.btn-label').textContent = '✓ RSVP Received!';
-          btn.style.background = '#7a9e7e';
-          btn.style.color = '#fff';
-          msgEl.className = 'rsvp-message success';
-          msgEl.textContent = '🎉 Thank you! Your RSVP has been received. We can\'t wait to celebrate with you!';
-          form.reset();
-        }, 800);
-        return;
-      }
 
       try {
         // Google Apps Script requires no-cors mode
@@ -1166,57 +1269,5 @@
     }
   </script>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-
-    const Countdown = () => {
-      const calculateTimeLeft = () => {
-        const difference = new Date('2026-09-10T10:00:00') - new Date();
-        if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-        return {
-          days: Math.floor(difference / 86400000),
-          hours: Math.floor((difference % 86400000) / 3600000),
-          minutes: Math.floor((difference % 3600000) / 60000),
-          seconds: Math.floor((difference % 60000) / 1000)
-        };
-      };
-
-      const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-
-      useEffect(() => {
-        const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
-        return () => clearInterval(timer);
-      }, []);
-
-      const format = (num) => String(num).padStart(2, '0');
-
-      return (
-        <div className="countdown-grid">
-          <div className="count-item">
-            <div className="count-num">{timeLeft.days}</div>
-            <div className="count-label">Days</div>
-          </div>
-          <div className="count-sep" aria-hidden="true">:</div>
-          <div className="count-item">
-            <div className="count-num">{format(timeLeft.hours)}</div>
-            <div className="count-label">Hours</div>
-          </div>
-          <div className="count-sep" aria-hidden="true">:</div>
-          <div className="count-item">
-            <div className="count-num">{format(timeLeft.minutes)}</div>
-            <div className="count-label">Minutes</div>
-          </div>
-          <div className="count-sep" aria-hidden="true">:</div>
-          <div className="count-item">
-            <div className="count-num">{format(timeLeft.seconds)}</div>
-            <div className="count-label">Seconds</div>
-          </div>
-        </div>
-      );
-    };
-
-    const root = ReactDOM.createRoot(document.getElementById('react-countdown-root'));
-    root.render(<Countdown />);
-  </script>
 </body>
 </html>
