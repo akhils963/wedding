@@ -33,8 +33,9 @@
       background: var(--beige);
       color: var(--text);
       font-family: 'Jost', sans-serif;
+      font-size: 1.05rem;
       font-weight: 300;
-      line-height: 1.7;
+      line-height: 1.8;
       overflow-x: hidden;
     }
 
@@ -250,7 +251,7 @@
     .section-sub {
       text-align: center;
       color: var(--text-light);
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       margin-top: 0.5rem;
     }
 
@@ -259,34 +260,37 @@
     .countdown-grid {
       display: flex;
       justify-content: center;
-      gap: 2rem;
+      align-items: flex-start;
+      gap: clamp(0.4rem, 2vw, 2rem);
       margin-top: 3.5rem;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
     .count-item {
       text-align: center;
-      min-width: 90px;
+      min-width: 0;
+      flex: 0 0 auto;
     }
     .count-num {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 4rem;
+      font-size: clamp(2.2rem, 8vw, 4rem);
       font-weight: 300;
       color: var(--brown-dark);
       line-height: 1;
     }
     .count-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
+      font-size: clamp(0.5rem, 1.5vw, 0.65rem);
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--gold);
       margin-top: 0.3rem;
     }
     .count-sep {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 3rem;
+      font-size: clamp(1.8rem, 6vw, 3rem);
       color: var(--beige-deeper);
       align-self: flex-start;
-      padding-top: 0.4rem;
+      padding-top: 0.3rem;
+      flex: 0 0 auto;
     }
 
     /* ─── OUR STORY / COUPLE ─── */
@@ -313,9 +317,9 @@
       margin-bottom: 0.3rem;
     }
     .story-desc {
-      font-size: 0.9rem;
+      font-size: 1.02rem;
       color: var(--text-light);
-      line-height: 1.8;
+      line-height: 1.9;
     }
 
     /* ─── ABOUT US SECTION ─── */
@@ -776,9 +780,82 @@
       color: var(--text);
     }
     .check-option input:checked ~ .check-label { color: var(--brown-dark); font-weight: 400; }
+
+    /* ─── MUSIC PLAYER ─── */
+    #music-player {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    #music-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--brown-dark);
+      border: 2px solid var(--gold);
+      color: var(--gold-light);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(92,64,51,0.4);
+      transition: background 0.25s, transform 0.2s;
+      flex-shrink: 0;
+    }
+    #music-btn:hover {
+      background: var(--gold);
+      color: var(--brown-dark);
+      transform: scale(1.1);
+    }
+    #music-btn.playing {
+      animation: pulse-music 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse-music {
+      0%, 100% { box-shadow: 0 4px 20px rgba(201,169,110,0.4); }
+      50% { box-shadow: 0 4px 30px rgba(201,169,110,0.9); }
+    }
+    .music-label {
+      background: rgba(92,64,51,0.92);
+      color: var(--gold-light);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.82rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 2rem;
+      border: 1px solid rgba(201,169,110,0.3);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(10px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+    #music-player:hover .music-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    @media (max-width: 500px) {
+      #music-player { bottom: 1.2rem; right: 1.2rem; }
+      #music-btn { width: 46px; height: 46px; font-size: 1.1rem; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- YOUTUBE BACKGROUND MUSIC (hidden player) -->
+  <div id="yt-player-wrapper" style="position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;" aria-hidden="true">
+    <div id="yt-player"></div>
+  </div>
+
+  <!-- FLOATING MUSIC PLAYER -->
+  <div id="music-player">
+    <span class="music-label">Our Song ♪</span>
+    <button id="music-btn" aria-label="Play/Pause music" title="Play our song">♪</button>
+  </div>
 
   <!-- NAV -->
   <nav id="main-nav">
@@ -813,7 +890,7 @@
     <p class="hero-date fade-in">Thursday, 10th September 2026</p>
 
     <p class="hero-verse fade-in" style="margin-top:2rem;">
-      "Two souls, one heart — bound by love, blessed by grace."
+      "Two souls, one heart, bound by love, blessed by grace."
     </p>
 
     <div class="scroll-hint" aria-hidden="true">
@@ -896,12 +973,11 @@
         <div class="about-us-text">
           <div class="about-us-quote-mark">"</div>
           <p class="about-us-body">
-            We spent three years in the same college — close enough to share friends, yet far from sharing a story. Life took us on separate journeys, shaping us through lessons, growth and unexpected turns. Then, when the timing was finally right, the universe rewrote the script.
+            We spent three years in the same college, close enough to share friends, yet far from sharing a story. Life took us on separate journeys, shaping us through lessons, growth and unexpected turns. Then, when the timing was finally right, the universe rewrote the script.
           </p>
           <p class="about-us-body">
-            Today, we're each other's calm in the chaos, loudest cheerleaders and favourite adventure — creating a life filled with happiness, adventure, and endless gratitude.
+            Today, we're each other's calm in the chaos, loudest cheerleaders and favourite adventure, creating a life filled with happiness, adventure, and endless gratitude.
           </p>
-          <p class="about-us-tagline">— Akhil &amp; Abhini</p>
         </div>
       </div>
     </div>
@@ -1040,13 +1116,7 @@
           </div>
           <div class="form-group">
             <label for="guests">No. of Guests <span class="req">*</span></label>
-            <select id="guests" name="guests">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5+">5+</option>
-            </select>
+            <input type="number" id="guests" name="guests" min="1" max="20" value="1" placeholder="e.g. 2" required />
           </div>
         </div>
         <div class="form-group">
@@ -1055,17 +1125,17 @@
             <label class="check-option">
               <input type="checkbox" name="events" value="Haldi (9 Sep)" />
               <span class="check-box"></span>
-              <span class="check-label">🪔 Haldi &mdash; 9 Sep</span>
+              <span class="check-label">🪔 Haldi - 9 Sep</span>
             </label>
             <label class="check-option">
-              <input type="checkbox" name="events" value="Wedding Ceremony (10 Sep)" />
+              <input type="checkbox" name="events" value="Wedding Ceremony (10 Sep, Guruvayur)" />
               <span class="check-box"></span>
-              <span class="check-label">💍 Wedding Ceremony &mdash; 10 Sep</span>
+              <span class="check-label">💍 Wedding - 10 Sep, Guruvayur</span>
             </label>
             <label class="check-option">
               <input type="checkbox" name="events" value="Reception Mysore (12 Sep)" />
               <span class="check-box"></span>
-              <span class="check-label">🥂 Reception Mysore &mdash; 12 Sep</span>
+              <span class="check-label">🥂 Reception - 12 Sep, Mysore</span>
             </label>
           </div>
         </div>
@@ -1266,6 +1336,80 @@
       p.style.animationDuration = Math.random() * 5 + 5 + 's';
       hero.appendChild(p);
     }
+
+    // ── YouTube Music Player ──────────────────────────────────
+    const musicBtn = document.getElementById('music-btn');
+    let ytPlayer   = null;
+    let isPlaying  = false;
+    const YT_VIDEO_ID = 'KEcJYOE7YKk';
+
+    // Load YouTube IFrame API script dynamically
+    function loadYTApi() {
+      if (window.YT && window.YT.Player) { onYouTubeIframeAPIReady(); return; }
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+
+    // Called automatically by YouTube API once loaded
+    window.onYouTubeIframeAPIReady = function() {
+      ytPlayer = new YT.Player('yt-player', {
+        height: '1',
+        width:  '1',
+        videoId: YT_VIDEO_ID,
+        playerVars: {
+          autoplay:       0,
+          loop:           1,
+          playlist:       YT_VIDEO_ID,
+          controls:       0,
+          disablekb:      1,
+          fs:             0,
+          rel:            0,
+          modestbranding: 1
+        },
+        events: {
+          onStateChange: function(e) {
+            // YT.PlayerState.ENDED = 0
+            if (e.data === 0) {
+              ytPlayer.playVideo();
+            }
+          }
+        }
+      });
+    };
+
+    musicBtn.addEventListener('click', () => {
+      if (!ytPlayer) {
+        // First click: load API and auto-play once ready
+        loadYTApi();
+        // Wait for player to be ready, then play
+        const waitAndPlay = setInterval(() => {
+          if (ytPlayer && ytPlayer.playVideo) {
+            clearInterval(waitAndPlay);
+            ytPlayer.playVideo();
+            musicBtn.textContent = '❚❚';
+            musicBtn.classList.add('playing');
+            musicBtn.setAttribute('title', 'Pause');
+            isPlaying = true;
+          }
+        }, 300);
+        return;
+      }
+
+      if (isPlaying) {
+        ytPlayer.pauseVideo();
+        musicBtn.textContent = '♪';
+        musicBtn.classList.remove('playing');
+        musicBtn.setAttribute('title', 'Play our song');
+        isPlaying = false;
+      } else {
+        ytPlayer.playVideo();
+        musicBtn.textContent = '❚❚';
+        musicBtn.classList.add('playing');
+        musicBtn.setAttribute('title', 'Pause');
+        isPlaying = true;
+      }
+    });
   </script>
 
 </body>
