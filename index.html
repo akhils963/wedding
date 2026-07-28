@@ -1141,18 +1141,18 @@
         <div class="form-row">
           <div class="form-group">
             <label for="attending">Attending? <span class="req">*</span></label>
-            <select id="attending" name="attending" required>
+            <select id="attending" name="attending" required onchange="handleAttendingChange(this.value)">
               <option value="" disabled selected>Select</option>
               <option value="yes">Joyfully Accepts</option>
               <option value="no">Regretfully Declines</option>
             </select>
           </div>
-          <div class="form-group">
+          <div class="form-group" id="guests-group">
             <label for="guests">No. of Guests <span class="req">*</span></label>
             <input type="number" id="guests" name="guests" min="1" max="20" value="1" placeholder="e.g. 2" required />
           </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="events-group">
           <label>Which events will you attend?</label>
           <div class="events-check-group">
             <label class="check-option">
@@ -1252,13 +1252,49 @@
       return /^[+]?[0-9]{7,15}$/.test(cleaned);
     }
 
+    // ── Handle Attending change (disable guests/events if declining) ──
+    function handleAttendingChange(value) {
+      const isDeclining = (value === 'no');
+      const guestsInput = document.getElementById('guests');
+      const guestsGroup = document.getElementById('guests-group');
+      const eventsGroup = document.getElementById('events-group');
+      const eventChecks = document.querySelectorAll('input[name="events"]');
+
+      // Disable/enable guests
+      guestsInput.disabled = isDeclining;
+      guestsGroup.style.opacity = isDeclining ? '0.4' : '1';
+      guestsGroup.style.pointerEvents = isDeclining ? 'none' : 'auto';
+      if (isDeclining) {
+        guestsInput.value = '0';
+        guestsInput.removeAttribute('required');
+        guestsInput.min = '0';
+      } else {
+        guestsInput.value = '1';
+        guestsInput.setAttribute('required', '');
+        guestsInput.min = '1';
+      }
+
+      // Disable/enable event checkboxes
+      eventsGroup.style.opacity = isDeclining ? '0.4' : '1';
+      eventsGroup.style.pointerEvents = isDeclining ? 'none' : 'auto';
+      eventChecks.forEach(cb => {
+        cb.disabled = isDeclining;
+        if (isDeclining) cb.checked = false;
+      });
+    }
+
     // ── RSVP form handler ────────────────────────────────────
-    async function handleRsvp(e) {
+    function handleRsvp(e) {
       e.preventDefault();
       const form    = e.target;
       const btn     = document.getElementById('rsvp-btn');
       const msgEl   = document.getElementById('rsvp-message');
-      const inputs  = form.querySelectorAll('[required]');
+      const isDeclining = form.attending.value === 'no';
+
+      // Get required fields (skip guests if declining)
+      const inputs = isDeclining
+        ? form.querySelectorAll('#fname, #lname, #phone, #attending')
+        : form.querySelectorAll('[required]');
 
       // Clear previous validation state
       inputs.forEach(el => el.classList.remove('invalid'));
@@ -1268,7 +1304,7 @@
       // Client-side validation
       let valid = true;
       inputs.forEach(el => {
-        if (!el.value.trim()) { el.classList.add('invalid'); valid = false; }
+        if (!el.value || !el.value.trim()) { el.classList.add('invalid'); valid = false; }
       });
 
       // Extra phone validation
@@ -1284,48 +1320,48 @@
         return;
       }
 
-      // Loading state
-      btn.disabled = true;
-      btn.classList.add('loading');
-      btn.querySelector('.btn-label').textContent = 'Sending…';
-
-      const checkedEvents = [...form.querySelectorAll('input[name="events"]:checked')]
-        .map(cb => cb.value).join(', ') || 'None selected';
+      // Build payload
+      const checkedEvents = isDeclining
+        ? 'None selected'
+        : ([...form.querySelectorAll('input[name="events"]:checked')]
+            .map(cb => cb.value).join(', ') || 'None selected');
 
       const payload = {
         fname:     form.fname.value.trim(),
         lname:     form.lname.value.trim(),
         phone:     form.phone.value.trim(),
         attending: form.attending.value,
-        guests:    form.guests.value,
+        guests:    isDeclining ? '0' : form.guests.value,
         events:    checkedEvents,
         message:   form.message.value.trim()
       };
 
-      try {
-        // Google Apps Script requires no-cors mode
-        await fetch(RSVP_SHEET_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        // no-cors means we can't read the response — assume success
-        btn.classList.remove('loading');
-        btn.querySelector('.btn-label').textContent = '✓ RSVP Received!';
-        btn.style.background = '#7a9e7e';
-        btn.style.color = '#fff';
+      // ── Instant success! Show confetti immediately ──
+      btn.disabled = true;
+      btn.classList.remove('loading');
+      btn.querySelector('.btn-label').textContent = '✓ RSVP Received!';
+      btn.style.background = '#7a9e7e';
+      btn.style.color = '#fff';
+
+      if (isDeclining) {
+        msgEl.className = 'rsvp-message success';
+        msgEl.textContent = '😢 We\'ll miss you! Thank you for letting us know.';
+      } else {
         msgEl.className = 'rsvp-message success';
         msgEl.textContent = '🎉 Thank you! Your RSVP has been received. We can\'t wait to celebrate with you!';
         if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-        form.reset();
-      } catch (err) {
-        btn.classList.remove('loading');
-        btn.disabled = false;
-        btn.querySelector('.btn-label').textContent = 'Send My RSVP';
-        msgEl.className = 'rsvp-message error';
-        msgEl.textContent = 'Something went wrong. Please try again or contact us directly.';
       }
+
+      form.reset();
+      handleAttendingChange('yes'); // Reset form to default state
+
+      // ── Send data in the background (fire-and-forget) ──
+      fetch(RSVP_SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(() => {}); // silently ignore — no-cors can't read response anyway
     }
 
     // ── Lightbox ──────────────────────────────────────────────
