@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Abhini & Akhil, Year One</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Caveat:wght@500;700&family=Nunito+Sans:wght@400;600&display=swap">
+<style>
+/* Layout: a dotted path winds down the page; each memory sits at a bend, alternating sides */
+:root{
+  --bg:#f5f0fb; --paper:#ffffff; --ink:#2b1a3e; --muted:#7a6596; --accent:#7a3fc4; --path:#c9aeea; --glow:#e7dbf7; --frame-shadow:rgba(43,26,62,.16);
+  --display:"Cormorant Garamond",Georgia,serif; --hand:"Caveat","Segoe Script",cursive; --body:"Nunito Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#140d1f;--paper:#231834;--ink:#efe6fb;--muted:#b5a0d2;--accent:#b78af2;--path:#523a78;--glow:#2a1c40;--frame-shadow:rgba(0,0,0,.5);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#140d1f;--paper:#231834;--ink:#efe6fb;--muted:#b5a0d2;--accent:#b78af2;--path:#523a78;--glow:#2a1c40;--frame-shadow:rgba(0,0,0,.5);color-scheme:dark}
+body{background:var(--bg) radial-gradient(ellipse 80% 420px at 50% 0,var(--glow),transparent) no-repeat;color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:880px;margin:0 auto}
+header{text-align:center;padding-block:72px 40px;display:grid;gap:10px;justify-items:center}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(42px,8vw,76px);line-height:1.05;margin:0;text-wrap:balance}
+h1 em{color:var(--accent)}
+.sub{font-family:var(--hand);font-size:27px;color:var(--muted);margin:0}
+.counter{font-variant-numeric:tabular-nums;font-size:14px;color:var(--muted)}
+.counter b{color:var(--accent);font-weight:600;font-size:18px}
+
+.song{font:inherit;border:0;cursor:pointer;margin-top:10px;display:inline-flex;align-items:center;gap:12px;padding:10px 20px 10px 12px;border-radius:999px;background:var(--accent);color:var(--paper);text-decoration:none;box-shadow:0 8px 22px var(--frame-shadow);text-align:left}
+.song b{display:block;font-weight:600;line-height:1.2}
+.song small{display:block;font-size:12px;opacity:.85;line-height:1.2}
+.song .play{width:34px;height:34px;border-radius:50%;background:var(--paper);position:relative;flex:none}
+.song .play::after{content:"";position:absolute;left:13px;top:10px;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent var(--accent)}
+.song[aria-pressed="true"] .play::after{left:11px;top:10px;width:12px;height:14px;border:0;border-left:4px solid var(--accent);border-right:4px solid var(--accent);box-sizing:border-box}
+.mini{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:5;width:52px;height:52px;border-radius:50%;border:0;cursor:pointer;background:var(--accent);box-shadow:0 8px 22px var(--frame-shadow);display:grid;place-items:center}
+.mini .play{width:34px;height:34px;border-radius:50%;background:var(--paper);position:relative}
+.mini .play::after{content:"";position:absolute;left:13px;top:10px;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent var(--accent)}
+.mini[aria-pressed="true"] .play::after{left:11px;width:12px;height:14px;border:0;border-left:4px solid var(--accent);border-right:4px solid var(--accent);box-sizing:border-box}
+.song:focus-visible,.mini:focus-visible{outline:3px solid var(--path);outline-offset:3px}
+@media (prefers-reduced-motion:no-preference){.song{transition:transform .2s ease}.song:hover{transform:translateY(-2px)}}
+
+.path{position:relative;display:grid;gap:64px;padding-block:24px}
+.path svg.line{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.stop{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+.stop:nth-child(odd of .stop) .frame{order:2}
+.frame{margin:0;background:var(--paper);padding:12px 12px 46px;box-shadow:0 12px 30px var(--frame-shadow);max-width:340px;width:100%;justify-self:center;transform:rotate(-2deg);position:relative}
+.stop:nth-child(odd of .stop) .frame{transform:rotate(2deg)}
+.frame img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;max-width:100%;background:var(--glow)}
+.frame figcaption{position:absolute;left:8px;right:8px;bottom:8px;text-align:center;font-family:var(--hand);font-size:23px;line-height:1.2;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note{min-width:0;display:grid;gap:6px}
+.stop:nth-child(odd of .stop) .note{justify-items:end;text-align:right}
+.when{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
+.note h2{font-family:var(--display);font-weight:500;font-size:31px;line-height:1.15;margin:0;text-wrap:balance}
+.note h2.todo{color:var(--muted);font-style:italic;font-size:24px}
+.note p{margin:0;color:var(--muted);max-width:36ch}
+.pin{display:none;position:absolute;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 6px var(--bg);transform:translate(-50%,-50%);z-index:1}
+
+.letter{margin-top:80px;background:var(--paper);padding:36px clamp(20px,5vw,48px);box-shadow:0 12px 30px var(--frame-shadow);display:grid;gap:14px;max-width:620px;margin-inline:auto;border-top:4px solid var(--accent)}
+.letter h2{font-family:var(--display);font-weight:500;font-size:36px;margin:0}
+.letter p{font-family:var(--hand);font-size:25px;line-height:1.4;margin:0}
+.letter .sign{text-align:right;color:var(--accent)}
+
+@media (max-width:640px){
+  .stop{grid-template-columns:1fr;gap:18px;padding-left:28px}
+  .stop:nth-child(odd of .stop) .frame{order:0}
+  .stop:nth-child(odd of .stop) .note{justify-items:start;text-align:left}
+  .frame{justify-self:start}
+  .pin{display:block;left:2px;top:24px;transform:translateY(-50%)}
+  .path svg.line{display:none}
+  .path::before{content:"";position:absolute;left:0;top:0;bottom:0;border-left:3px dotted var(--path)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .frame{transition:transform .35s ease}
+  .frame:hover{transform:rotate(0) scale(1.03)}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">16 October 2025 &rarr; 16 October 2026</span>
+    <h1>One year of <em>us</em></h1>
+    <p class="sub">for Abhini, from Akhil</p>
+    <a href="../" style="font-size:13px;color:var(--muted)">&larr; back to our wedding site</a>
+    <span class="counter" id="counter"></span>
+    <button type="button" class="song" id="songBtn" aria-pressed="false">
+      <span class="play" aria-hidden="true"></span>
+      <span><b id="songLabel">Play our song</b><small>Oorum Blood (Unplugged)</small></span>
+    </button>
+    <audio id="song" loop preload="auto" src="song.mp3"></audio>
+  </header>
+
+  <section class="path" id="path">
+    <svg class="line" id="line" aria-hidden="true"></svg>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m01.jpg" alt="First time we met" loading="lazy"><figcaption>First time we met</figcaption></figure>
+      <div class="note"><span class="when">Memory 01</span><h2>First time we met</h2><p>Guruvayur. Our very first selfie together.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m02.jpg" alt="First photo in Hyderabad" loading="lazy"><figcaption>First photo in Hyderabad</figcaption></figure>
+      <div class="note"><span class="when">Memory 02</span><h2>First photo in Hyderabad</h2><p>The city that would become ours.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m03.jpg" alt="Our first date" loading="lazy"><figcaption>Our first date</figcaption></figure>
+      <div class="note"><span class="when">Memory 03</span><h2>Our first date</h2><p>Cafe Lake View. Remember this place.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m04.jpg" alt="First outing in Mysuru" loading="lazy"><figcaption>First outing in Mysuru</figcaption></figure>
+      <div class="note"><span class="when">Memory 04</span><h2>First outing in Mysuru</h2><p>Kukkarahalli Lake.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m05.jpg" alt="The Hampi trip" loading="lazy"><figcaption>The Hampi trip</figcaption></figure>
+      <div class="note"><span class="when">Memory 05</span><h2>The Hampi trip</h2><p>Old stones, new memories.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m06.jpg" alt="Still in Hampi" loading="lazy"><figcaption>Still in Hampi</figcaption></figure>
+      <div class="note"><span class="when">Memory 06</span><h2>Still in Hampi</h2><p>One trip, too many favourite moments.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m07.jpg" alt="Second time we met" loading="lazy"><figcaption>Second time we met</figcaption></figure>
+      <div class="note"><span class="when">Memory 07</span><h2>Second time we met</h2><p>Back in Mysuru.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m08.jpg" alt="Our first shopping trip" loading="lazy"><figcaption>Our first shopping trip</figcaption></figure>
+      <div class="note"><span class="when">Memory 08</span><h2>Our first shopping trip</h2></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m09.jpg" alt="Shopping, round two" loading="lazy"><figcaption>Shopping, round two</figcaption></figure>
+      <div class="note"><span class="when">Memory 09</span><h2>Shopping, round two</h2></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m10.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
+      <div class="note"><span class="when">Memory 10</span><h2>Save the date</h2><p>Our first selfie for the save the date.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m11.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
+      <div class="note"><span class="when">Memory 11</span><h2>Save the date</h2><p>A different attire, same smile.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m12.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
+      <div class="note"><span class="when">Memory 12</span><h2>Save the date</h2></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m13.jpg" alt="Our wedding day" loading="lazy"><figcaption>Our wedding day</figcaption></figure>
+      <div class="note"><span class="when">Memory 13</span><h2>Our wedding day</h2></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m14.jpg" alt="Just married" loading="lazy"><figcaption>Just married</figcaption></figure>
+      <div class="note"><span class="when">Memory 14</span><h2>Just married</h2><p>Right after the wedding.</p></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m15.jpg" alt="First photo in our bedroom" loading="lazy"><figcaption>First photo in our bedroom</figcaption></figure>
+      <div class="note"><span class="when">Memory 15</span><h2>First photo in our bedroom</h2></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m16.jpg" alt="Our reception" loading="lazy"><figcaption>Our reception</figcaption></figure>
+      <div class="note"><span class="when">Memory 16</span><h2>Our reception</h2></div>
+    </article>
+    <article class="stop">
+      <span class="pin"></span>
+      <figure class="frame"><img src="img/m17.jpg" alt="One year later" loading="lazy"><figcaption>One year later</figcaption></figure>
+      <div class="note"><span class="when">Memory 17</span><h2>One year later</h2><p>Back at Cafe Lake View, the same place as our first date.</p></div>
+    </article>
+  </section>
+
+  <section class="letter">
+    <h2>Abhini,</h2>
+    <p>A year ago a conversation started that I never wanted to end. Every stop on this path is a day I'm glad I got to spend with you.</p>
+    <p>Here's to every year after this one.</p>
+    <p class="sign">&mdash; Akhil</p>
+  </section>
+</div>
+
+<button type="button" class="mini" id="miniBtn" aria-label="Play our song" aria-pressed="false" hidden><span class="play" aria-hidden="true"></span></button>
+
+<script>
+(function(){
+  var a=document.getElementById('song'), btn=document.getElementById('songBtn'), mini=document.getElementById('miniBtn'), lbl=document.getElementById('songLabel');
+  function sync(){var on=!a.paused;btn.setAttribute('aria-pressed',on);mini.setAttribute('aria-pressed',on);lbl.textContent=on?'Pause our song':'Play our song';mini.setAttribute('aria-label',on?'Pause our song':'Play our song');}
+  function toggle(){ if(a.paused){a.play().catch(function(){});mini.hidden=false;} else a.pause(); }
+  btn.addEventListener('click',toggle); mini.addEventListener('click',toggle);
+  a.addEventListener('play',sync); a.addEventListener('pause',sync);
+})();
+(function(){
+  var start=new Date(2025,9,16), now=new Date();
+  var days=Math.max(0,Math.floor((now-start)/86400000));
+  document.getElementById('counter').innerHTML='<b>'+days+'</b> days since the first message';
+  function draw(){
+    var path=document.getElementById('path'), svg=document.getElementById('line');
+    if(getComputedStyle(svg).display==='none')return;
+    var box=path.getBoundingClientRect(), pts=[];
+    path.querySelectorAll('.stop .frame').forEach(function(f){
+      var r=f.getBoundingClientRect(); pts.push([r.left+r.width/2-box.left, r.top+r.height/2-box.top]);
+    });
+    if(!pts.length)return;
+    var d='M'+pts[0][0]+' '+pts[0][1];
+    for(var i=1;i<pts.length;i++){var a=pts[i-1],b=pts[i],my=(a[1]+b[1])/2;d+=' C'+a[0]+' '+my+' '+b[0]+' '+my+' '+b[0]+' '+b[1];}
+    svg.setAttribute('viewBox','0 0 '+box.width+' '+box.height);
+    svg.innerHTML='<path d="'+d+'" fill="none" stroke="var(--path)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>';
+  }
+  window.addEventListener('load',draw); window.addEventListener('resize',draw);
+  document.querySelectorAll('.frame img').forEach(function(i){i.addEventListener('load',draw)});
+  draw();
+})();
+</script>
+
+</body>
+</html>
