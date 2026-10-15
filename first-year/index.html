@@ -13,6 +13,7 @@
 /* Layout: a dotted path winds down the page; each memory sits at a bend, alternating sides */
 :root{
   --bg:#f5f0fb; --paper:#ffffff; --ink:#2b1a3e; --muted:#7a6596; --accent:#7a3fc4; --path:#c9aeea; --glow:#e7dbf7; --frame-shadow:rgba(43,26,62,.16);
+  --env:#efe5fb; --env-shade:#d8c4f1; --env-deep:#c4a9ea; --seal:#7a3fc4;
   --display:"Cormorant Garamond",Georgia,serif; --hand:"Caveat","Segoe Script",cursive; --body:"Nunito Sans",system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#140d1f;--paper:#231834;--ink:#efe6fb;--muted:#b5a0d2;--accent:#b78af2;--path:#523a78;--glow:#2a1c40;--frame-shadow:rgba(0,0,0,.5);color-scheme:dark}}
@@ -68,9 +69,9 @@ h1 em{color:var(--accent)}
 
 /* motion */
 @media (prefers-reduced-motion:no-preference){
-  header>*{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
-  header>*:nth-child(2){animation-delay:.12s} header>*:nth-child(3){animation-delay:.28s}
-  header>*:nth-child(4){animation-delay:.4s} header>*:nth-child(5){animation-delay:.5s} header>*:nth-child(6){animation-delay:.6s}
+  .opened header>*,.opened .places{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+  .opened header>*:nth-child(2){animation-delay:.12s} .opened header>*:nth-child(3){animation-delay:.28s}
+  .opened header>*:nth-child(4){animation-delay:.4s} .opened header>*:nth-child(5){animation-delay:.5s} .opened header>*:nth-child(6){animation-delay:.6s} .opened .places{animation-delay:.75s}
   h1 em{display:inline-block;animation:shimmer 4s ease-in-out infinite}
   .js-reveal .stop .frame{opacity:0;transform:translateY(60px) scale(.82) rotate(-7deg);transition:opacity 1.6s ease,transform 2s cubic-bezier(.34,1.3,.5,1)}
   .js-reveal .stop:nth-child(odd of .stop) .frame{transform:translateY(60px) scale(.82) rotate(7deg)}
@@ -90,6 +91,54 @@ h1 em{color:var(--accent)}
 @keyframes shimmer{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-3deg)}}
 @keyframes pulse{0%,100%{box-shadow:0 8px 22px var(--frame-shadow),0 0 0 0 var(--path)}50%{box-shadow:0 8px 22px var(--frame-shadow),0 0 0 12px transparent}}
 
+/* cover */
+.cover-on{overflow:hidden}
+.cover-on header>*,.cover-on .places{opacity:0}
+.cover{position:fixed;inset:0;z-index:20;display:grid;place-content:center;justify-items:center;gap:18px;padding:24px max(16px,env(safe-area-inset-left,0px));background:var(--bg) radial-gradient(ellipse 70% 60% at 50% 45%,var(--glow),transparent);transition:opacity 1s ease,visibility 1s}
+.cover.gone{opacity:0;visibility:hidden}
+.cover-to{font-family:var(--hand);font-size:clamp(32px,7vw,44px);color:var(--ink);margin:0}
+.cover-hint{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0}
+.envelope{position:relative;width:min(320px,78vw);aspect-ratio:3/2;border:0;padding:0;background:none;cursor:pointer;perspective:900px;margin-top:40px}
+.envelope:focus-visible{outline:3px solid var(--accent);outline-offset:10px}
+.envelope span{position:absolute;display:block}
+.env-back{inset:0;background:var(--env-deep);border-radius:6px}
+.env-letter{left:7%;right:7%;top:8%;bottom:6%;background:var(--paper);border-radius:4px;box-shadow:0 4px 12px var(--frame-shadow);display:grid!important;place-items:center;font-family:var(--display);font-size:clamp(20px,5vw,26px);color:var(--accent);transition:transform 1s cubic-bezier(.3,.8,.3,1) .55s}
+.env-front{inset:0;background:var(--env);border-radius:6px;clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%);box-shadow:inset 0 -6px 18px var(--env-shade)}
+.env-flap{left:0;right:0;top:0;height:60%;background:var(--env-shade);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top center;transition:transform .8s cubic-bezier(.5,0,.3,1),z-index 0s .4s;z-index:3;border-radius:6px 6px 0 0}
+.seal{left:50%;top:56%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:var(--seal);z-index:4;display:grid!important;place-items:center;box-shadow:0 4px 12px var(--frame-shadow);transition:opacity .3s ease,transform .4s ease}
+.seal svg{width:24px;height:24px;fill:var(--env)}
+.opening .env-flap{transform:rotateX(180deg);z-index:0}
+.opening .seal{opacity:0;transform:scale(.4)}
+.opening .env-letter{transform:translateY(-58%)}
+@media (prefers-reduced-motion:no-preference){
+  .cover:not(.opening) .envelope{animation:bob 3s ease-in-out infinite}
+  .cover:not(.opening) .seal{animation:beat 1.6s ease-in-out infinite}
+}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.12)}30%{transform:scale(1)}45%{transform:scale(1.08)}}
+
+/* places */
+.places{display:grid;justify-items:center;gap:12px;padding-block:8px 32px}
+.places-label{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.places ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 0}
+.places li{display:flex;align-items:center}
+.places li+li::before{content:"";width:clamp(18px,5vw,48px);border-top:2px dotted var(--path);margin-inline:6px}
+.places a{display:grid;justify-items:center;text-decoration:none;color:var(--ink);padding:8px 14px;border-radius:999px;background:var(--paper);box-shadow:0 4px 14px var(--frame-shadow);transition:transform .25s ease,background .25s ease}
+.places a:hover{transform:translateY(-3px)}
+.places a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.places b{font-family:var(--display);font-weight:500;font-size:20px;line-height:1.1}
+.places small{font-size:11px;letter-spacing:.12em;color:var(--accent);font-variant-numeric:tabular-nums}
+.stop{scroll-margin-top:80px}
+
+/* path progress */
+.mprog,.mheart{display:none}
+.walker path{fill:var(--accent)}
+
+/* ending */
+.next{justify-self:center;margin-top:10px;font-family:var(--display);font-style:italic;font-size:26px;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--path);padding-bottom:2px}
+.next:hover{border-color:var(--accent)}
+.next:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+
 @media (max-width:640px){
   .stop{grid-template-columns:1fr;gap:18px;padding-left:28px}
   .stop:nth-child(odd of .stop) .frame{order:0}
@@ -98,6 +147,11 @@ h1 em{color:var(--accent)}
   .pin{display:block;left:2px;top:24px;transform:translateY(-50%)}
   .path svg.line{display:none}
   .path::before{content:"";position:absolute;left:0;top:0;bottom:0;border-left:3px dotted var(--path)}
+  .mprog{display:block;position:absolute;left:0;top:0;height:0;border-left:3px dotted var(--accent)}
+  .mheart{display:block;position:absolute;left:-9px;top:0;width:20px;height:20px;margin-top:-10px;z-index:2}
+  .mheart path{fill:var(--accent)}
+  .places b{font-size:17px}
+  .places a{padding:6px 11px}
 }
 @media (prefers-reduced-motion:no-preference){
   .frame{transition:transform .35s ease}
@@ -105,6 +159,17 @@ h1 em{color:var(--accent)}
 }
 </style>
 
+<div class="cover" id="cover" hidden>
+  <button type="button" class="envelope" id="openBtn" aria-label="Open your surprise">
+    <span class="env-back"></span>
+    <span class="env-letter">One year of us</span>
+    <span class="env-front"></span>
+    <span class="env-flap"></span>
+    <span class="seal" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.2 5.3 3.1 1.7-1.9 3.1-3.1 5.3-3.1 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg></span>
+  </button>
+  <p class="cover-to">For Abhini</p>
+  <p class="cover-hint">Tap to open &middot; sound on</p>
+</div>
 <canvas id="floaters" aria-hidden="true"></canvas>
 <div class="wrap">
   <header>
@@ -120,89 +185,101 @@ h1 em{color:var(--accent)}
     <audio id="song" loop preload="auto" src="song.mp3"></audio>
   </header>
 
+  <nav class="places" aria-label="Where the year took us">
+    <span class="places-label">Where the year took us</span>
+    <ol>
+      <li><a href="#m01"><b>Guruvayur</b><small>01</small></a></li>
+      <li><a href="#m02"><b>Hyderabad</b><small>02</small></a></li>
+      <li><a href="#m04"><b>Mysuru</b><small>04 &middot; 07</small></a></li>
+      <li><a href="#m05"><b>Hampi</b><small>05 &middot; 06</small></a></li>
+    </ol>
+  </nav>
+
   <section class="path" id="path">
     <svg class="line" id="line" aria-hidden="true"></svg>
-    <article class="stop">
+    <span class="mprog" id="mprog"></span>
+    <svg class="mheart" id="mheart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.2 5.3 3.1 1.7-1.9 3.1-3.1 5.3-3.1 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>
+    <article class="stop" id="m01">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m01.jpg" alt="First time we met" loading="lazy"><figcaption>First time we met</figcaption></figure>
       <div class="note"><span class="when">Memory 01</span><h2>First time we met</h2><p>Guruvayur. Our very first selfie together.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m02">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m02.jpg" alt="First photo in Hyderabad" loading="lazy"><figcaption>First photo in Hyderabad</figcaption></figure>
       <div class="note"><span class="when">Memory 02</span><h2>First photo in Hyderabad</h2><p>The city that would become ours.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m03">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m03.jpg" alt="Our first date" loading="lazy"><figcaption>Our first date</figcaption></figure>
       <div class="note"><span class="when">Memory 03</span><h2>Our first date</h2><p>Cafe Lake View. Remember this place.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m04">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m04.jpg" alt="First outing in Mysuru" loading="lazy"><figcaption>First outing in Mysuru</figcaption></figure>
       <div class="note"><span class="when">Memory 04</span><h2>First outing in Mysuru</h2><p>Kukkarahalli Lake.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m05">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m05.jpg" alt="The Hampi trip" loading="lazy"><figcaption>The Hampi trip</figcaption></figure>
       <div class="note"><span class="when">Memory 05</span><h2>The Hampi trip</h2><p>Old stones, new memories.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m06">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m06.jpg" alt="Still in Hampi" loading="lazy"><figcaption>Still in Hampi</figcaption></figure>
       <div class="note"><span class="when">Memory 06</span><h2>Still in Hampi</h2><p>One trip, too many favourite moments.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m07">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m07.jpg" alt="Second time we met" loading="lazy"><figcaption>Second time we met</figcaption></figure>
       <div class="note"><span class="when">Memory 07</span><h2>Second time we met</h2><p>Back in Mysuru.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m08">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m08.jpg" alt="Our first shopping trip" loading="lazy"><figcaption>Our first shopping trip</figcaption></figure>
       <div class="note"><span class="when">Memory 08</span><h2>Our first shopping trip</h2></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m09">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m09.jpg" alt="Shopping, round two" loading="lazy"><figcaption>Shopping, round two</figcaption></figure>
       <div class="note"><span class="when">Memory 09</span><h2>Shopping, round two</h2></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m10">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m10.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
       <div class="note"><span class="when">Memory 10</span><h2>Save the date</h2><p>Our first selfie for the save the date.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m11">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m11.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
       <div class="note"><span class="when">Memory 11</span><h2>Save the date</h2><p>A different attire, same smile.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m12">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m12.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
       <div class="note"><span class="when">Memory 12</span><h2>Save the date</h2></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m13">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m13.jpg" alt="Our wedding day" loading="lazy"><figcaption>Our wedding day</figcaption></figure>
       <div class="note"><span class="when">Memory 13</span><h2>Our wedding day</h2></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m14">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m14.jpg" alt="Just married" loading="lazy"><figcaption>Just married</figcaption></figure>
       <div class="note"><span class="when">Memory 14</span><h2>Just married</h2><p>Right after the wedding.</p></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m15">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m15.jpg" alt="First photo in our bedroom" loading="lazy"><figcaption>First photo in our bedroom</figcaption></figure>
       <div class="note"><span class="when">Memory 15</span><h2>First photo in our bedroom</h2></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m16">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m16.jpg" alt="Our reception" loading="lazy"><figcaption>Our reception</figcaption></figure>
       <div class="note"><span class="when">Memory 16</span><h2>Our reception</h2></div>
     </article>
-    <article class="stop">
+    <article class="stop" id="m17">
       <span class="pin"></span>
       <figure class="frame"><img src="img/m17.jpg" alt="One year later" loading="lazy"><figcaption>One year later</figcaption></figure>
       <div class="note"><span class="when">Memory 17</span><h2>One year later</h2><p>Back at Cafe Lake View, the same place as our first date.</p></div>
@@ -214,6 +291,7 @@ h1 em{color:var(--accent)}
     <p>A year ago a conversation started that I never wanted to end. Every stop on this path is a day I'm glad I got to spend with you.</p>
     <p>Here's to every year after this one.</p>
     <p class="sign">&mdash; Akhil</p>
+    <a class="next" href="../">Here's to year two &rarr;</a>
   </section>
 </div>
 
@@ -224,13 +302,13 @@ h1 em{color:var(--accent)}
 (function(){
   if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   document.documentElement.classList.add('js-reveal');
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var t=e.target;t.classList.add('in');io.unobserve(t);setTimeout(function(){t.classList.add('done')},2100);}})},{rootMargin:'0px 0px -12% 0px',threshold:.05});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var t=e.target;t.classList.add('in');io.unobserve(t);setTimeout(function(){t.classList.add('done')},2100);if(t.classList.contains('letter'))setTimeout(function(){var r=t.getBoundingClientRect();window.heartBurst&&window.heartBurst(r.left+r.width/2,r.top+40)},700);}})},{rootMargin:'0px 0px -12% 0px',threshold:.05});
   document.querySelectorAll('.stop,.letter').forEach(function(el){io.observe(el)});
   setTimeout(function(){document.querySelectorAll('.stop,.letter').forEach(function(el){var r=el.getBoundingClientRect();if(r.top<innerHeight){el.classList.add('in');setTimeout(function(){el.classList.add('done')},2100);}})},60);
 })();
 /* floating hearts, petals and sparkles */
 (function(){
-  var c=document.getElementById('floaters'),x=c.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1),W,H,P=[],run=true;
+  var c=document.getElementById('floaters'),x=c.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1),W,H,P=[],B=[],run=true;
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function col(){var s=getComputedStyle(document.documentElement);return [s.getPropertyValue('--accent').trim(),s.getPropertyValue('--path').trim(),'#f2a6c8'];}
   var C=col(); matchMedia('(prefers-color-scheme: dark)').addEventListener&&matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){C=col()});
@@ -248,8 +326,12 @@ h1 em{color:var(--accent)}
       x.save();x.translate(p.x,p.y);x.rotate(p.t===0?Math.sin(p.a)*.3:p.r);
       x.globalAlpha=p.t===2?p.o*(.6+.4*Math.sin(p.a*3)):p.o;x.fillStyle=p.c;
       p.t===0?heart(p.s):p.t===1?petal(p.s):spark(p.s);x.restore();}
+    for(var j=B.length-1;j>=0;j--){var b=B[j];b.x+=b.vx;b.y+=b.vy;b.vy+=.12;b.vx*=.985;b.l-=.012;b.r+=b.vr;
+      if(b.l<=0){B.splice(j,1);continue;}
+      x.save();x.translate(b.x,b.y);x.rotate(b.r);x.globalAlpha=Math.min(1,b.l*1.4);x.fillStyle=b.c;b.t?spark(b.s):heart(b.s);x.restore();}
     if(run&&!reduce)requestAnimationFrame(frame);
   }
+  window.heartBurst=function(cx,cy){if(reduce)return;for(var i=0;i<70;i++){var ang=Math.random()*6.28,sp=3+Math.random()*7;B.push({x:cx,y:cy,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp-4,s:7+Math.random()*12,c:C[i%3],l:1+Math.random()*.6,r:Math.random()*6.28,vr:(Math.random()-.5)*.2,t:Math.random()<.25});}};
   addEventListener('resize',init);
   document.addEventListener('visibilitychange',function(){var was=run;run=!document.hidden;if(run&&!was&&!reduce)requestAnimationFrame(frame);});
   init();frame();
@@ -260,6 +342,17 @@ h1 em{color:var(--accent)}
   function toggle(){ if(a.paused){a.play().catch(function(){});mini.hidden=false;} else a.pause(); }
   btn.addEventListener('click',toggle); mini.addEventListener('click',toggle);
   a.addEventListener('play',sync); a.addEventListener('pause',sync);
+  var cover=document.getElementById('cover'), root=document.documentElement;
+  cover.hidden=false; root.classList.add('cover-on');
+  document.getElementById('openBtn').addEventListener('click',function(){
+    if(cover.classList.contains('opening'))return;
+    a.play().catch(function(){}); mini.hidden=false;
+    var fast=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    cover.classList.add('opening');
+    setTimeout(function(){cover.classList.add('gone');root.classList.remove('cover-on');root.classList.add('opened');},fast?100:1700);
+    setTimeout(function(){cover.hidden=true;window.dispatchEvent(new Event('resize'));},fast?1200:2800);
+  });
+  document.querySelectorAll('.places a').forEach(function(l){l.addEventListener('click',function(e){var t=document.querySelector(l.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});}});});
 })();
 (function(){
   var start=new Date(2025,9,16), now=new Date();
@@ -268,17 +361,37 @@ h1 em{color:var(--accent)}
   function draw(){
     var path=document.getElementById('path'), svg=document.getElementById('line');
     if(getComputedStyle(svg).display==='none')return;
-    var box=path.getBoundingClientRect(), pts=[];
+    var box={width:path.offsetWidth,height:path.offsetHeight}, pts=[];
     path.querySelectorAll('.stop .frame').forEach(function(f){
-      var r=f.getBoundingClientRect(); pts.push([r.left+r.width/2-box.left, r.top+r.height/2-box.top]);
+      var st=f.parentNode; pts.push([st.offsetLeft+f.offsetLeft+f.offsetWidth/2, st.offsetTop+f.offsetTop+f.offsetHeight/2]);
     });
     if(!pts.length)return;
     var d='M'+pts[0][0]+' '+pts[0][1];
     for(var i=1;i<pts.length;i++){var a=pts[i-1],b=pts[i],my=(a[1]+b[1])/2;d+=' C'+a[0]+' '+my+' '+b[0]+' '+my+' '+b[0]+' '+b[1];}
     svg.setAttribute('viewBox','0 0 '+box.width+' '+box.height);
-    svg.innerHTML='<path d="'+d+'" fill="none" stroke="var(--path)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>';
+    var H='<defs><clipPath id="clipP"><rect id="clipR" x="0" y="0" width="'+box.width+'" height="0"/></clipPath></defs>'
+      +'<path d="'+d+'" fill="none" stroke="var(--path)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>'
+      +'<path id="progP" d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-dasharray="2 10" stroke-linecap="round" clip-path="url(#clipP)"/>'
+      +'<g id="walker" class="walker"><circle r="15" fill="var(--bg)" opacity=".85"/><path transform="translate(-11 -11) scale(.92)" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.2 5.3 3.1 1.7-1.9 3.1-3.1 5.3-3.1 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></g>';
+    svg.innerHTML=H; first=pts[0][1]; last=pts[pts.length-1][1]; prog();
   }
-  window.addEventListener('load',draw); window.addEventListener('resize',draw);
+  var first=0,last=0,ticking=false;
+  function prog(){
+    ticking=false;
+    var path=document.getElementById('path'), top=path.getBoundingClientRect().top;
+    var y=innerHeight*0.55-top;
+    var mp=document.getElementById('mprog'), mh=document.getElementById('mheart');
+    var yc=Math.max(0,Math.min(path.offsetHeight,y));
+    mp.style.height=yc+'px'; mh.style.top=yc+'px';
+    var p=document.getElementById('progP'), r=document.getElementById('clipR'), w=document.getElementById('walker');
+    if(!p)return;
+    var ty=Math.max(first,Math.min(last,y)); r.setAttribute('height',ty);
+    var L=p.getTotalLength(), lo=0, hi=L;
+    for(var i=0;i<22;i++){var mid=(lo+hi)/2; if(p.getPointAtLength(mid).y<ty)lo=mid; else hi=mid;}
+    var pt=p.getPointAtLength(lo); w.setAttribute('transform','translate('+pt.x+' '+pt.y+')');
+  }
+  window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(prog);}},{passive:true});
+  window.addEventListener('load',function(){draw();prog();}); window.addEventListener('resize',function(){draw();prog();});
   document.querySelectorAll('.frame img').forEach(function(i){i.addEventListener('load',draw)});
   draw();
 })();
