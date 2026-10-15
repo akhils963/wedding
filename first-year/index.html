@@ -61,6 +61,34 @@ h1 em{color:var(--accent)}
 .letter p{font-family:var(--hand);font-size:25px;line-height:1.4;margin:0}
 .letter .sign{text-align:right;color:var(--accent)}
 
+/* background floaters */
+#floaters{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1}
+.mini{z-index:5}
+
+/* motion */
+@media (prefers-reduced-motion:no-preference){
+  header>*{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+  header>*:nth-child(2){animation-delay:.12s} header>*:nth-child(3){animation-delay:.28s}
+  header>*:nth-child(4){animation-delay:.4s} header>*:nth-child(5){animation-delay:.5s} header>*:nth-child(6){animation-delay:.6s}
+  h1 em{display:inline-block;animation:shimmer 4s ease-in-out infinite}
+  .js-reveal .stop .frame{opacity:0;transform:translateY(40px) rotate(-6deg);transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+  .js-reveal .stop:nth-child(odd of .stop) .frame{transform:translateY(40px) rotate(6deg)}
+  .js-reveal .stop .note{opacity:0;transform:translateY(24px);transition:opacity .8s ease .15s,transform .8s ease .15s}
+  .js-reveal .stop.in .frame{opacity:1;transform:rotate(-2deg)}
+  .js-reveal .stop.in:nth-child(odd of .stop) .frame{transform:rotate(2deg)}
+  .js-reveal .stop.in .note{opacity:1;transform:none}
+  .js-reveal .stop.in .frame:hover{transform:rotate(0) scale(1.03)}
+  .js-reveal .letter{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s ease}
+  .js-reveal .letter.in{opacity:1;transform:none}
+  .song[aria-pressed="true"],.mini[aria-pressed="true"]{animation:pulse 2.2s ease-in-out infinite}
+  .frame img{transition:filter .4s ease}
+  .frame:hover img{filter:saturate(1.15) brightness(1.04)}
+}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes shimmer{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-3deg)}}
+@keyframes pulse{0%,100%{box-shadow:0 8px 22px var(--frame-shadow),0 0 0 0 var(--path)}50%{box-shadow:0 8px 22px var(--frame-shadow),0 0 0 12px transparent}}
+
 @media (max-width:640px){
   .stop{grid-template-columns:1fr;gap:18px;padding-left:28px}
   .stop:nth-child(odd of .stop) .frame{order:0}
@@ -76,6 +104,7 @@ h1 em{color:var(--accent)}
 }
 </style>
 
+<canvas id="floaters" aria-hidden="true"></canvas>
 <div class="wrap">
   <header>
     <span class="eyebrow">16 October 2025 &rarr; 16 October 2026</span>
@@ -190,6 +219,40 @@ h1 em{color:var(--accent)}
 <button type="button" class="mini" id="miniBtn" aria-label="Play our song" aria-pressed="false" hidden><span class="play" aria-hidden="true"></span></button>
 
 <script>
+/* scroll reveal: content stays visible if JS or the observer is missing */
+(function(){
+  if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  document.documentElement.classList.add('js-reveal');
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{rootMargin:'0px 0px -12% 0px',threshold:.05});
+  document.querySelectorAll('.stop,.letter').forEach(function(el){io.observe(el)});
+  setTimeout(function(){document.querySelectorAll('.stop,.letter').forEach(function(el){var r=el.getBoundingClientRect();if(r.top<innerHeight)el.classList.add('in')})},60);
+})();
+/* floating hearts, petals and sparkles */
+(function(){
+  var c=document.getElementById('floaters'),x=c.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1),W,H,P=[],run=true;
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function col(){var s=getComputedStyle(document.documentElement);return [s.getPropertyValue('--accent').trim(),s.getPropertyValue('--path').trim(),'#f2a6c8'];}
+  var C=col(); matchMedia('(prefers-color-scheme: dark)').addEventListener&&matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){C=col()});
+  function size(){W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);}
+  function mk(y){var k=Math.random();return{x:Math.random()*W,y:y==null?H+20:y,s:6+Math.random()*12,v:.25+Math.random()*.55,a:Math.random()*6.28,sw:.4+Math.random()*1,r:Math.random()*6.28,vr:(Math.random()-.5)*.02,t:k<.45?0:k<.8?1:2,c:C[Math.floor(Math.random()*3)],o:.18+Math.random()*.32};}
+  function heart(s){x.beginPath();x.moveTo(0,s*.3);x.bezierCurveTo(-s,-s*.35,-s*.45,-s*1.05,0,-s*.45);x.bezierCurveTo(s*.45,-s*1.05,s,-s*.35,0,s*.3);x.fill();}
+  function petal(s){x.beginPath();x.ellipse(0,0,s*.35,s*.7,0,0,6.28);x.fill();}
+  function spark(s){x.beginPath();for(var i=0;i<4;i++){x.rotate(Math.PI/2);x.moveTo(0,0);x.quadraticCurveTo(s*.12,s*.12,0,s*.6);x.quadraticCurveTo(-s*.12,s*.12,0,0);}x.fill();}
+  function init(){size();P=[];var n=Math.round(Math.min(40,W*H/32000));for(var i=0;i<n;i++)P.push(mk(Math.random()*H));}
+  function frame(){
+    x.clearRect(0,0,W,H);
+    for(var i=0;i<P.length;i++){var p=P[i];
+      if(!reduce){p.y-=p.v;p.a+=.012;p.x+=Math.sin(p.a)*p.sw*.5;p.r+=p.vr;}
+      if(p.y<-30){P[i]=mk();continue;}
+      x.save();x.translate(p.x,p.y);x.rotate(p.t===0?Math.sin(p.a)*.3:p.r);
+      x.globalAlpha=p.t===2?p.o*(.6+.4*Math.sin(p.a*3)):p.o;x.fillStyle=p.c;
+      p.t===0?heart(p.s):p.t===1?petal(p.s):spark(p.s);x.restore();}
+    if(run&&!reduce)requestAnimationFrame(frame);
+  }
+  addEventListener('resize',init);
+  document.addEventListener('visibilitychange',function(){var was=run;run=!document.hidden;if(run&&!was&&!reduce)requestAnimationFrame(frame);});
+  init();frame();
+})();
 (function(){
   var a=document.getElementById('song'), btn=document.getElementById('songBtn'), mini=document.getElementById('miniBtn'), lbl=document.getElementById('songLabel');
   function sync(){var on=!a.paused;btn.setAttribute('aria-pressed',on);mini.setAttribute('aria-pressed',on);lbl.textContent=on?'Pause our song':'Play our song';mini.setAttribute('aria-label',on?'Pause our song':'Play our song');}
