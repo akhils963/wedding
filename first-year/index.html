@@ -72,13 +72,14 @@ h1 em{color:var(--accent)}
   header>*:nth-child(2){animation-delay:.12s} header>*:nth-child(3){animation-delay:.28s}
   header>*:nth-child(4){animation-delay:.4s} header>*:nth-child(5){animation-delay:.5s} header>*:nth-child(6){animation-delay:.6s}
   h1 em{display:inline-block;animation:shimmer 4s ease-in-out infinite}
-  .js-reveal .stop .frame{opacity:0;transform:translateY(40px) rotate(-6deg);transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
-  .js-reveal .stop:nth-child(odd of .stop) .frame{transform:translateY(40px) rotate(6deg)}
-  .js-reveal .stop .note{opacity:0;transform:translateY(24px);transition:opacity .8s ease .15s,transform .8s ease .15s}
+  .js-reveal .stop .frame{opacity:0;transform:translateY(60px) scale(.82) rotate(-7deg);transition:opacity 1.6s ease,transform 2s cubic-bezier(.34,1.3,.5,1)}
+  .js-reveal .stop:nth-child(odd of .stop) .frame{transform:translateY(60px) scale(.82) rotate(7deg)}
+  .js-reveal .stop .note{opacity:0;transform:translateY(24px);transition:opacity 1.2s ease .6s,transform 1.2s ease .6s}
   .js-reveal .stop.in .frame{opacity:1;transform:rotate(-2deg)}
   .js-reveal .stop.in:nth-child(odd of .stop) .frame{transform:rotate(2deg)}
   .js-reveal .stop.in .note{opacity:1;transform:none}
   .js-reveal .stop.in .frame:hover{transform:rotate(0) scale(1.03)}
+  .js-reveal .stop.done .frame{transition:transform .35s ease,opacity .35s ease}
   .js-reveal .letter{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s ease}
   .js-reveal .letter.in{opacity:1;transform:none}
   .song[aria-pressed="true"],.mini[aria-pressed="true"]{animation:pulse 2.2s ease-in-out infinite}
@@ -223,9 +224,9 @@ h1 em{color:var(--accent)}
 (function(){
   if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   document.documentElement.classList.add('js-reveal');
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{rootMargin:'0px 0px -12% 0px',threshold:.05});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var t=e.target;t.classList.add('in');io.unobserve(t);setTimeout(function(){t.classList.add('done')},2100);}})},{rootMargin:'0px 0px -12% 0px',threshold:.05});
   document.querySelectorAll('.stop,.letter').forEach(function(el){io.observe(el)});
-  setTimeout(function(){document.querySelectorAll('.stop,.letter').forEach(function(el){var r=el.getBoundingClientRect();if(r.top<innerHeight)el.classList.add('in')})},60);
+  setTimeout(function(){document.querySelectorAll('.stop,.letter').forEach(function(el){var r=el.getBoundingClientRect();if(r.top<innerHeight){el.classList.add('in');setTimeout(function(){el.classList.add('done')},2100);}})},60);
 })();
 /* floating hearts, petals and sparkles */
 (function(){
