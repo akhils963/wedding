@@ -143,7 +143,10 @@ h1 em{color:var(--accent)}
   .stop{grid-template-columns:1fr;gap:18px;padding-left:28px}
   .stop:nth-child(odd of .stop) .frame{order:0}
   .stop:nth-child(odd of .stop) .note{justify-items:start;text-align:left}
-  .frame{justify-self:start}
+  .frame{justify-self:start;max-width:min(260px,72vw);padding:9px 9px 38px}
+  .frame figcaption{font-size:19px}
+  .note h2{font-size:26px}
+  .path{gap:48px}
   .pin{display:block;left:2px;top:24px;transform:translateY(-50%)}
   .path svg.line{display:none}
   .path::before{content:"";position:absolute;left:0;top:0;bottom:0;border-left:3px dotted var(--path)}
@@ -291,7 +294,6 @@ h1 em{color:var(--accent)}
     <p>A year ago a conversation started that I never wanted to end. Every stop on this path is a day I'm glad I got to spend with you.</p>
     <p>Here's to every year after this one.</p>
     <p class="sign">&mdash; Akhil</p>
-    <a class="next" href="../">Here's to year two &rarr;</a>
   </section>
 </div>
 
