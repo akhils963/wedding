@@ -47,10 +47,20 @@ h1 em{color:var(--accent)}
 .path svg.line{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
 .stop{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
 .stop:nth-child(odd of .stop) .frame{order:2}
-.frame{margin:0;background:var(--paper);padding:12px 12px 46px;box-shadow:0 12px 30px var(--frame-shadow);max-width:340px;width:100%;justify-self:center;transform:rotate(-2deg);position:relative}
+.frame{margin:0;max-width:340px;width:100%;justify-self:center;transform:rotate(-2deg);position:relative;perspective:1200px}
+.flip{display:block;width:100%;border:0;padding:0;margin:0;background:none;font:inherit;color:inherit;text-align:inherit;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.4,.2,.2,1)}
+.flip[aria-pressed="true"]{transform:rotateY(180deg)}
+.flip:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
+.face{display:block;background:var(--paper);padding:12px 12px 46px;box-shadow:0 12px 30px var(--frame-shadow);-webkit-backface-visibility:hidden;backface-visibility:hidden;position:relative}
+.back{position:absolute;inset:0;transform:rotateY(180deg);display:grid;align-content:center;gap:14px;padding:28px 26px;text-align:center;background:var(--paper) radial-gradient(ellipse at 50% 0,var(--glow),transparent 70%)}
+.back-num{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.back-note{font-family:var(--hand);font-size:25px;line-height:1.3;color:var(--ink)}
+.back-hint,.front-hint{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.front-hint{position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:50%;background:var(--paper);display:grid;place-items:center;box-shadow:0 2px 8px var(--frame-shadow);opacity:.9}
+.front-hint svg{width:16px;height:16px;fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .stop:nth-child(odd of .stop) .frame{transform:rotate(2deg)}
 .frame img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;max-width:100%;background:var(--glow)}
-.frame figcaption{position:absolute;left:8px;right:8px;bottom:8px;text-align:center;font-family:var(--hand);font-size:23px;line-height:1.2;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.frame .cap{position:absolute;left:8px;right:8px;bottom:8px;text-align:center;font-family:var(--hand);font-size:23px;line-height:1.2;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .note{min-width:0;display:grid;gap:6px}
 .stop:nth-child(odd of .stop) .note{justify-items:end;text-align:right}
 .when{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
@@ -121,6 +131,7 @@ h1 em{color:var(--accent)}
 
 /* places */
 .places{display:grid;justify-items:center;gap:12px;padding-block:8px 32px}
+.flip-tip{margin-top:6px;letter-spacing:.12em!important;text-transform:none!important;font-size:13px!important}
 .places-label{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 .places ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 0}
 .places li{display:flex;align-items:center}
@@ -145,8 +156,12 @@ h1 em{color:var(--accent)}
   .stop{grid-template-columns:1fr;gap:18px;padding-left:28px}
   .stop:nth-child(odd of .stop) .frame{order:0}
   .stop:nth-child(odd of .stop) .note{justify-items:start;text-align:left}
-  .frame{justify-self:start;max-width:min(260px,72vw);padding:9px 9px 38px}
-  .frame figcaption{font-size:19px}
+  .frame{justify-self:start;max-width:min(260px,72vw)}
+  .face{padding:9px 9px 38px}
+  .frame .cap{font-size:19px}
+  .back{padding:20px 18px;gap:10px}
+  .back-note{font-size:21px}
+  .front-hint{top:14px;right:14px;width:26px;height:26px}
   .note h2{font-size:26px}
   .path{gap:48px}
   .pin{display:block;left:2px;top:24px;transform:translateY(-50%)}
@@ -193,11 +208,13 @@ h1 em{color:var(--accent)}
   <nav class="places" aria-label="Where the year took us">
     <span class="places-label">Where the year took us</span>
     <ol>
-      <li><a href="#m01"><b>Guruvayur</b><small>01</small></a></li>
+      <li><a href="#m01"><b>Thrissur</b><small>01</small></a></li>
       <li><a href="#m02"><b>Hyderabad</b><small>02</small></a></li>
       <li><a href="#m04"><b>Mysuru</b><small>04 &middot; 07</small></a></li>
       <li><a href="#m05"><b>Hampi</b><small>05 &middot; 06</small></a></li>
+      <li><a href="#m13"><b>Guruvayur</b><small>13</small></a></li>
     </ol>
+    <span class="places-label flip-tip">Tap any photo to turn it over</span>
   </nav>
 
   <section class="path" id="path">
@@ -206,87 +223,87 @@ h1 em{color:var(--accent)}
     <svg class="mheart" id="mheart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.2 5.3 3.1 1.7-1.9 3.1-3.1 5.3-3.1 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>
     <article class="stop" id="m01">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m01.jpg" alt="First time we met" loading="lazy"><figcaption>First time we met</figcaption></figure>
-      <div class="note"><span class="when">Memory 01</span><h2>First time we met</h2><p>Guruvayur. Our very first selfie together.</p></div>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m01.jpg" alt="First time we met" loading="lazy"><span class="cap">First time we met</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 01</span><span class="back-note">This was taken in Thrissur, the day it all began. Thank you, GK, for this one.</span><span class="back-hint">Tap to flip back</span></span></button></div>
+      <div class="note"><span class="when">Memory 01</span><h2>First time we met</h2><p>Thrissur. Our very first selfie together.</p></div>
     </article>
     <article class="stop" id="m02">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m02.jpg" alt="First photo in Hyderabad" loading="lazy"><figcaption>First photo in Hyderabad</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m02.jpg" alt="First photo in Hyderabad" loading="lazy"><span class="cap">First photo in Hyderabad</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 02</span><span class="back-note">Our first time alone together, and our first 24 hours in one place. I was so excited to spend that whole day with you.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 02</span><h2>First photo in Hyderabad</h2><p>The city that would become ours.</p></div>
     </article>
     <article class="stop" id="m03">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m03.jpg" alt="Our first date" loading="lazy"><figcaption>Our first date</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m03.jpg" alt="Our first date" loading="lazy"><span class="cap">Our first date</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 03</span><span class="back-note">Our first date. We matched in black without planning it. So many first talks, and a lot of gazing into each other&#x27;s eyes.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 03</span><h2>Our first date</h2><p>Cafe Lake View. Remember this place.</p></div>
     </article>
     <article class="stop" id="m04">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m04.jpg" alt="First outing in Mysuru" loading="lazy"><figcaption>First outing in Mysuru</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m04.jpg" alt="First outing in Mysuru" loading="lazy"><span class="cap">First outing in Mysuru</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 04</span><span class="back-note">Our first official outing. We walked around the lake for an hour, and it felt like ten minutes.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 04</span><h2>First outing in Mysuru</h2><p>Kukkarahalli Lake.</p></div>
     </article>
     <article class="stop" id="m05">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m05.jpg" alt="The Hampi trip" loading="lazy"><figcaption>The Hampi trip</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m05.jpg" alt="The Hampi trip" loading="lazy"><span class="cap">The Hampi trip</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 05</span><span class="back-note">Just you and me in the car, talking the whole way. Five hundred kilometres never felt that short, because it was with you.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 05</span><h2>The Hampi trip</h2><p>Old stones, new memories.</p></div>
     </article>
     <article class="stop" id="m06">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m06.jpg" alt="Still in Hampi" loading="lazy"><figcaption>Still in Hampi</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m06.jpg" alt="Still in Hampi" loading="lazy"><span class="cap">Still in Hampi</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 06</span><span class="back-note">Talking about history, and imagining how this place looked all those centuries ago.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 06</span><h2>Still in Hampi</h2><p>One trip, too many favourite moments.</p></div>
     </article>
     <article class="stop" id="m07">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m07.jpg" alt="Second time we met" loading="lazy"><figcaption>Second time we met</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m07.jpg" alt="Second time we met" loading="lazy"><span class="cap">Second time we met</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 07</span><span class="back-note">The official one. The day you came home and met my parents and my family.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 07</span><h2>Second time we met</h2><p>Back in Mysuru.</p></div>
     </article>
     <article class="stop" id="m08">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m08.jpg" alt="Our first shopping trip" loading="lazy"><figcaption>Our first shopping trip</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m08.jpg" alt="Our first shopping trip" loading="lazy"><span class="cap">Our first shopping trip</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 08</span><span class="back-note">Our first shopping trip, and the day I officially became your bag holder.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 08</span><h2>Our first shopping trip</h2></div>
     </article>
     <article class="stop" id="m09">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m09.jpg" alt="Shopping, round two" loading="lazy"><figcaption>Shopping, round two</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m09.jpg" alt="Shopping, round two" loading="lazy"><span class="cap">Shopping, round two</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 09</span><span class="back-note">The shopping never ended. Shopping, and shopping, and more shopping.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 09</span><h2>Shopping, round two</h2></div>
     </article>
     <article class="stop" id="m10">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m10.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m10.jpg" alt="Save the date" loading="lazy"><span class="cap">Save the date</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 10</span><span class="back-note">We were so excited about the save the date, and we looked gorgeous together. Special thanks to Mahesh Etan.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 10</span><h2>Save the date</h2><p>Our first selfie for the save the date.</p></div>
     </article>
     <article class="stop" id="m11">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m11.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m11.jpg" alt="Save the date" loading="lazy"><span class="cap">Save the date</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 11</span><span class="back-note">Traditional outfits this time, and everyone loved this one. While I was massaging your legs, the photographer said you had a very good future husband.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 11</span><h2>Save the date</h2><p>A different attire, same smile.</p></div>
     </article>
     <article class="stop" id="m12">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m12.jpg" alt="Save the date" loading="lazy"><figcaption>Save the date</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m12.jpg" alt="Save the date" loading="lazy"><span class="cap">Save the date</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 12</span><span class="back-note">The photo looks great. My back still remembers it.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 12</span><h2>Save the date</h2></div>
     </article>
     <article class="stop" id="m13">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m13.jpg" alt="Our wedding day" loading="lazy"><figcaption>Our wedding day</figcaption></figure>
-      <div class="note"><span class="when">Memory 13</span><h2>Our wedding day</h2></div>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m13.jpg" alt="Our wedding day" loading="lazy"><span class="cap">Our wedding day</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 13</span><span class="back-note">Our Guruvayur temple wedding. The first morning I was ever excited to wake up.</span><span class="back-hint">Tap to flip back</span></span></button></div>
+      <div class="note"><span class="when">Memory 13</span><h2>Our wedding day</h2><p>Guruvayur temple, in the morning.</p></div>
     </article>
     <article class="stop" id="m14">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m14.jpg" alt="Just married" loading="lazy"><figcaption>Just married</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m14.jpg" alt="Just married" loading="lazy"><span class="cap">Just married</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 14</span><span class="back-note">Travelling back home after the wedding, with my favourite person.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 14</span><h2>Just married</h2><p>Right after the wedding.</p></div>
     </article>
     <article class="stop" id="m15">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m15.jpg" alt="First photo in our bedroom" loading="lazy"><figcaption>First photo in our bedroom</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m15.jpg" alt="First photo in our bedroom" loading="lazy"><span class="cap">First photo in our bedroom</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 15</span><span class="back-note">Our wedding gifts and surprises, opened together.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 15</span><h2>First photo in our bedroom</h2></div>
     </article>
     <article class="stop" id="m16">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m16.jpg" alt="Our reception" loading="lazy"><figcaption>Our reception</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m16.jpg" alt="Our reception" loading="lazy"><span class="cap">Our reception</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 16</span><span class="back-note">Our reception, where you had no clue what was going on because everyone was talking in Kannada.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 16</span><h2>Our reception</h2></div>
     </article>
     <article class="stop" id="m17">
       <span class="pin"></span>
-      <figure class="frame"><img src="img/m17.jpg" alt="One year later" loading="lazy"><figcaption>One year later</figcaption></figure>
+      <div class="frame"><button type="button" class="flip" aria-pressed="false" aria-label="Turn the photo over to read the note"><span class="face front"><img src="img/m17.jpg" alt="One year later" loading="lazy"><span class="cap">One year later</span><span class="front-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg></span></span><span class="face back"><span class="back-num">Memory 17</span><span class="back-note">Same café, same seats. We recreated our first date at Cafe Lake View.</span><span class="back-hint">Tap to flip back</span></span></button></div>
       <div class="note"><span class="when">Memory 17</span><h2>One year later</h2><p>Back at Cafe Lake View, the same place as our first date.</p></div>
     </article>
   </section>
@@ -356,6 +373,7 @@ h1 em{color:var(--accent)}
     setTimeout(function(){cover.classList.add('gone');root.classList.remove('cover-on');root.classList.add('opened');},fast?100:1700);
     setTimeout(function(){cover.hidden=true;window.dispatchEvent(new Event('resize'));},fast?1200:2800);
   });
+  document.querySelectorAll('.flip').forEach(function(f){f.addEventListener('click',function(){var on=f.getAttribute('aria-pressed')!=='true';f.setAttribute('aria-pressed',on);f.setAttribute('aria-label',on?'Show the photo':'Turn the photo over to read the note');});});
   document.querySelectorAll('.places a').forEach(function(l){l.addEventListener('click',function(e){var t=document.querySelector(l.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});}});});
 })();
 (function(){
